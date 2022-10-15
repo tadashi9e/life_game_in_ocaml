@@ -12,6 +12,19 @@ module Position =
 module PositionSet = Hashset.Make(Position)
 
 (*
+   Append some monadic syntaxes to List.
+   Thanks @htsign san.
+
+   see https://qiita.com/tadashi9e/items/07d94efb879fb6323244#comment-2e3f4d486ffee5f2f93b
+ *)
+module List = struct
+  include Stdlib.List
+  
+  let (let*) xs f = List.map f xs |> List.flatten
+  let return x = [x]
+end
+
+(*
    Function create_position_set_of:
  Get PositionSet as given position list.
 
@@ -45,14 +58,12 @@ let print_position_set set =
  Returns: (int * int) list.
  *)
 let territory_list_of (x, y) =
-  (* Generate product of x-list and y-list *)
-  let product xs ys =
-    List.fold_left (fun a x -> (List.map (fun y -> (x, y)) ys) @ a) [] xs
-  in
-  (* Generate list from x + a to x + b *)
-  let range a b x = List.init (b - a + 1) (fun i -> i + a + x) in
-  (* Returns (x, y) and all it's neighbours *)
-  product (range (-1) 1 x) (range (-1) 1 y)
+  let range a b = List.init (b - a) (fun i -> i + a) in
+  List.(
+    let* i = range (-1) 2 in
+    let* j = range (-1) 2 in
+    return (x + i, y + j)
+  )
 
 (*
    Function territory_set_of:

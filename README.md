@@ -40,7 +40,7 @@ And type following in utop:
 
 G.open_graph " 300x300" ;;
 
-let s0 = create_position_set_of (load_life105_from (0, 0) "glider_ne.life") in
+let s0 = load_life105_from (0, 0) "glider_ne.life" |> create_position_set_of in
 let s = ref s0 in
 for step = 1 to 200 do
   let s2 = life !s in
@@ -67,7 +67,7 @@ And type following in utop:
 
 G.open_graph " 300x300" ;;
 
-let s0 = create_position_set_of (load_life105_from (200, 200) "acorn.life") in
+let s0 = load_life105_from (200, 200) "acorn.life" |> create_position_set_of in
 let s = ref s0 in
 for step = 1 to 1000 do
   let s2 = life !s in

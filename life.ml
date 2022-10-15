@@ -19,10 +19,10 @@ module PositionSet = Hashset.Make(Position)
  Returns: PositionSet.t
  *)
 let create_position_set_of position_list =
-  List.fold_right
-    (fun p s -> PositionSet.add s p; s)
-    position_list
+  List.fold_left
+    (fun s p -> PositionSet.add s p; s)
     (PositionSet.create (List.length position_list))
+    position_list
 
 (*
    Function print_position_set:
@@ -47,7 +47,7 @@ let print_position_set set =
 let territory_list_of (x, y) =
   (* Generate product of x-list and y-list *)
   let product xs ys =
-    List.fold_right (fun x a -> (List.map (fun y -> (x, y)) ys) @ a) xs []
+    List.fold_left (fun a x -> (List.map (fun y -> (x, y)) ys) @ a) [] xs
   in
   (* Generate list from x + a to x + b *)
   let range a b x = List.init (b - a + 1) (fun i -> i + a + x) in
@@ -64,10 +64,10 @@ let territory_list_of (x, y) =
 let territory_set_of set =
   (* Add territory of position to set *)
   let add_territory_of position set =
-    List.fold_right
-      (fun p s -> PositionSet.add s p; s)
-      (territory_list_of position)
+    List.fold_left
+      (fun s p -> PositionSet.add s p; s)
       set
+      (territory_list_of position)
   in
   (* Get all territory of position set *)
   PositionSet.fold
@@ -91,10 +91,10 @@ let is_next_alive position set =
   in
   (* Count neighbour alive cells *)
   let count_neighbours position set =
-    List.fold_right
-      (fun p c -> if PositionSet.mem set p then (c + 1) else c)
-      (neighbours_list_of position)
+    List.fold_left
+      (fun c p -> if PositionSet.mem set p then (c + 1) else c)
       0
+      (neighbours_list_of position)
   in
   (* Determine next step alive/death *)
   match count_neighbours position set with
@@ -112,10 +112,10 @@ let life alives =
   let territory_set = territory_set_of alives in
   let territory_list =
     PositionSet.fold (fun p s -> p :: s) territory_set []
-  in List.fold_right
-    (fun p s -> if is_next_alive p alives then (PositionSet.add s p; s) else s)
-    territory_list
+  in List.fold_left
+    (fun s p -> if is_next_alive p alives then (PositionSet.add s p; s) else s)
     (PositionSet.create (PositionSet.cardinal territory_set))
+    territory_list
 
 module G = Graphics
 

@@ -1,7 +1,7 @@
 module Position =
   struct
     type t = int * int
-    let equal (x0,y0) (x1, y1) =
+    let equal (x0, y0) (x1, y1) =
       match Stdlib.compare x0 x1 with
         0 -> if Stdlib.compare y0 y1 = 0 then
           true else false
@@ -34,7 +34,7 @@ end
 let create_position_set_of position_list =
   List.fold_left
     (fun s p -> PositionSet.add s p; s)
-    (PositionSet.create (List.length position_list))
+    (List.length position_list |> PositionSet.create)
     position_list
 
 (*
@@ -122,10 +122,10 @@ let is_next_alive position set =
 let life alives =
   let territory_set = territory_set_of alives in
   let territory_list =
-    PositionSet.fold (fun p s -> p :: s) territory_set []
-  in List.fold_left
+    PositionSet.fold (fun p s -> p :: s) territory_set [] in
+  List.fold_left
     (fun s p -> if is_next_alive p alives then (PositionSet.add s p; s) else s)
-    (PositionSet.create (PositionSet.cardinal territory_set))
+    (PositionSet.cardinal territory_set |> PositionSet.create)
     territory_list
 
 module G = Graphics

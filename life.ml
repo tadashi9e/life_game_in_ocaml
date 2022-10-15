@@ -63,10 +63,10 @@ let territory_list_of (x, y) =
  *)
 let territory_set_of set =
   (* Add territory of position to set *)
-  let add_territory_of position set =
+  let add_territory_of position set2 =
     List.fold_left
       (fun s p -> PositionSet.add s p; s)
-      set
+      set2
       (territory_list_of position)
   in
   (* Get all territory of position set *)
